@@ -1,0 +1,5 @@
+kafka-topics --zookeeper 127.0.0.1:2181 --topic twitter_status_connect --create --partitions 3 --replication-factor 1
+kafka-topics --zookeeper 127.0.0.1:2181 --topic twitter_deletes_connect --create --partitions 3 --replication-factor 1
+kafka-topics --zookeeper 127.0.0.1:2181 --topic filtered_tweets --create --partitions 3 --replication-factor 1
+kafka-topics --zookeeper 127.0.0.1:2181 --topic reduced_tweets --create --partitions 3 --replication-factor 1
+kafka-topics --zookeeper 127.0.0.1:2181 --list
