@@ -1,0 +1,8 @@
+Cuando usamos varios connectors como standalone en el mismo host, hay que variar entre ellos las siguientes propiedades:
+
+offset.storage.file.filename
+rest.port
+
+Puedes verlo con:
+
+diff connect-standalone-tweeter-source.properties connect-standalone-mysql-sink.properties

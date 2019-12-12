@@ -1,5 +1,6 @@
 package com.github.periket2000.kafka.streams.map;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -10,6 +11,8 @@ import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.KStream;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 
 public class StreamsMapTweets {
@@ -37,6 +40,11 @@ public class StreamsMapTweets {
 
     private static JsonParser parser = new JsonParser();
 
+    /**
+     * Map a tweet to another json format
+     * @param tweet
+     * @return
+     */
     private static String map(String tweet) {
         try {
             JsonObject source = parser.parse(tweet)
@@ -44,10 +52,21 @@ public class StreamsMapTweets {
                     .get("payload")
                     .getAsJsonObject();
 
+            final String schemaStr = "{\"type\":\"struct\",\"fields\":[{\"type\":\"string\",\"optional\":false,\"field\":\"time\"},{\"type\":\"string\",\"optional\":false,\"field\":\"text\"},{\"type\":\"string\",\"optional\":false,\"field\":\"user\"}],\"optional\":false,\"name\":\"tweet-schema\"}";
+            JsonObject schema = parser.parse(schemaStr).getAsJsonObject();
+
+            // we should create a json with "schema" and "payload" if we want use it later with a sink jdbc
             JsonObject mappedTweet = new JsonObject();
-            mappedTweet.addProperty("time", source.get("CreatedAt").getAsString());
-            mappedTweet.addProperty("text", source.get("Text").getAsString());
-            mappedTweet.addProperty("user", source.get("User").getAsJsonObject().get("Name").getAsString());
+            mappedTweet.add("schema", new Gson().toJsonTree(schema));
+
+            JsonObject payload = new JsonObject();
+            Date d = new Date(Long.parseLong(source.get("CreatedAt").getAsString()));
+            String dd = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(d);
+            payload.addProperty("time", dd);
+            payload.addProperty("text", source.get("Text").getAsString());
+            payload.addProperty("user", source.get("User").getAsJsonObject().get("Name").getAsString());
+
+            mappedTweet.add("payload", new Gson().toJsonTree(payload));
             return mappedTweet.toString();
         } catch (NullPointerException e) {
             return "{}";
