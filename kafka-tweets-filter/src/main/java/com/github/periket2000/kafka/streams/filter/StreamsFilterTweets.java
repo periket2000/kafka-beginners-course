@@ -21,7 +21,7 @@ public class StreamsFilterTweets {
         StreamsBuilder builder = new StreamsBuilder();
         // input
         KStream<String, String> input = builder.stream("twitter_status_connect");
-        KStream<String, String> filtered = input.filter((k, tweet) -> extractFollowers(tweet) > 1000);
+        KStream<String, String> filtered = input.filter((k, tweet) -> extractFollowers(tweet) > 500);
         filtered.to("filtered_tweets");
         // build topology
         KafkaStreams stream = new KafkaStreams(builder.build(), p);

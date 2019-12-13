@@ -1,5 +1,6 @@
 package com.github.periket2000.kafka.streams.map;
 
+import com.github.periket2000.net.utils.Request;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -11,6 +12,10 @@ import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.KStream;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
@@ -27,7 +32,13 @@ public class StreamsMapTweets {
         StreamsBuilder builder = new StreamsBuilder();
         // input
         KStream<String, String> input = builder.stream("filtered_tweets");
-        KStream<String, String> mapped = input.map((k, tweet) -> {
+
+        // only spanish tweets
+        KStream<String, String> filtered = input.filter((k, tweet) -> "es".equals(getIdiom(getTweetText(tweet),
+                "http://localhost:8000/lang")));
+
+        // map to new format
+        KStream<String, String> mapped = filtered.map((k, tweet) -> {
             return new KeyValue<>(k, map(tweet));
         });
         mapped.to("reduced_tweets");
@@ -70,6 +81,28 @@ public class StreamsMapTweets {
             return mappedTweet.toString();
         } catch (NullPointerException e) {
             return "{}";
+        }
+    }
+
+    private static String getTweetText(String tweet) {
+        return parser.parse(tweet)
+                .getAsJsonObject()
+                .get("payload")
+                .getAsJsonObject()
+                .get("Text").getAsString();
+    }
+
+    private static String getIdiom(String sentence, String serviceUrl) {
+        try {
+            StringBuilder json = new StringBuilder();
+            json.append("{");
+            json.append("\"sentence\":\"" + sentence + "\"");
+            json.append("}");
+            String resp = Request.sendPOST(serviceUrl, json.toString());
+            JsonElement e = parser.parse(resp);
+            return e.getAsJsonObject().get("idiom").getAsString();
+        } catch (IOException e) {
+            return "Not known";
         }
     }
 }
