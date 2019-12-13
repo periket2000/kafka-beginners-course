@@ -101,7 +101,7 @@ public class StreamsMapTweets {
             String resp = Request.sendPOST(serviceUrl, json.toString());
             JsonElement e = parser.parse(resp);
             return e.getAsJsonObject().get("idiom").getAsString();
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             return "Not known";
         }
     }
