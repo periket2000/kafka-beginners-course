@@ -17,7 +17,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
 public class StreamsMapTweets {
@@ -33,8 +35,9 @@ public class StreamsMapTweets {
         // input
         KStream<String, String> input = builder.stream("filtered_tweets");
 
-        // only spanish tweets
-        KStream<String, String> filtered = input.filter((k, tweet) -> "es".equals(getIdiom(getTweetText(tweet),
+        // only spanish/english tweets
+        List<String> list = Arrays.asList(new String[] {"en", "es"});
+        KStream<String, String> filtered = input.filter((k, tweet) -> list.contains(getIdiom(getTweetText(tweet),
                 "http://localhost:8000/lang")));
 
         // map to new format
