@@ -29,7 +29,6 @@ public class NioSocketClient {
                                 f = q.take();
                             }
                             System.out.println("Processed request! " + (Integer) f.get());
-                            System.out.println("Buffer size: " + q.size());
                         }
                     } catch (InterruptedException | ExecutionException e) {
                         // TODO Auto-generated catch block
