@@ -25,9 +25,11 @@ public class NioSocketClient {
                         while(true) {
                             Future f = q.take();
                             while (!f.isDone()) {
-                                System.out.println("... ");
+                                q.add(f);
+                                f = q.take();
                             }
                             System.out.println("Processed request! " + (Integer) f.get());
+                            System.out.println("Buffer size: " + q.size());
                         }
                     } catch (InterruptedException | ExecutionException e) {
                         // TODO Auto-generated catch block
@@ -80,7 +82,7 @@ public class NioSocketClient {
 
                             System.out.println(messages [i]);
                             buffer.clear();
-                            Thread.sleep(1000);
+                            Thread.sleep(300);
                         }
                     }
                 } catch(Exception e) {
