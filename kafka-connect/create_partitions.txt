@@ -1,6 +1,53 @@
+# para tener las herramientas client en osx -> brew install kafka (pero no arrancar el servicio).
+
 kafka-topics --zookeeper 127.0.0.1:2181 --topic twitter_status_connect --create --partitions 3 --replication-factor 1
 kafka-topics --zookeeper 127.0.0.1:2181 --topic twitter_deletes_connect --create --partitions 3 --replication-factor 1
 kafka-topics --zookeeper 127.0.0.1:2181 --topic filtered_tweets --create --partitions 3 --replication-factor 1
 kafka-topics --zookeeper 127.0.0.1:2181 --topic reduced_tweets --create --partitions 3 --replication-factor 1
 kafka-topics --zookeeper 127.0.0.1:2181 --list
 kafka-topics --zookeeper 127.0.0.1:2181 --delete --topic reduced_tweets
+
+# arrancar kafka en docker (https://github.com/periket2000/kafka-stack) con docker-compose up!
+
+- crear los topics (los puertos pueden ser 22181, 32181, 42181)
+
+- kafka-topics --zookeeper 127.0.0.1:32181 --topic twitter_status_connect --create --partitions 3 --replication-factor 1
+- kafka-topics --zookeeper 127.0.0.1:32181 --topic twitter_deletes_connect --create --partitions 3 --replication-factor 1
+- kafka-topics --zookeeper 127.0.0.1:32181 --topic filtered_tweets --create --partitions 3 --replication-factor 1
+- kafka-topics --zookeeper 127.0.0.1:32181 --topic reduced_tweets --create --partitions 3 --replication-factor 1
+
+# arrancar mysql en docker (https://github.com/periket2000/mysql-stack.git)
+
+- docker run -e MYSQL_ROOT_PASSWORD=nuked -v /Users/periket2000/devel/docker/mysql/data/:/var/lib/mysql/ -p 3308:3306 mysql
+- mysql -u root -p --host=127.0.0.1 --port=3308
+- create database tweeter;
+- create user tweeter identified by 'password';
+- use tweeter;
+- CREATE TABLE `reduced_tweets` (`time` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(), `text` text NOT NULL, `user` varchar(256) NOT NULL ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+# arrancar sanic en docker (https://github.com/periket2000/sanic-nlp)
+
+- docker build -t mybi/sanic .
+- docker run -p8000:8000 mybi/sanic
+
+# arrancar tweeter_source
+
+- sh run_tweeter_source.sh
+
+# arrancar tweeter_sink
+
+- sh run_tweeter_mysql_sink.sh
+
+# arrancar StreamsFilterTweets
+
+# arrancar StreamsMapTweets
+
+
+## otros
+# opciones si estas en docker
+docker-compose exec kafka /opt/bitnami/kafka/bin/kafka-topics.sh \
+  --create \
+  --bootstrap-server localhost:9092 \
+  --replication-factor 1 \
+  --partitions 1 \
+  --topic users
