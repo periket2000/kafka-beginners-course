@@ -38,3 +38,9 @@ See projects:
 2. filter takes from X and filter by followers feeding topic Y
 3. map takes from Y checking tweet language and feeding topic Z
 4. mysql-sink takes from Z and insert in mysql DB
+
+## Test configurations
+
+* kafka-configs --bootstrap-server=127.0.0.1:29092 --describe --topic twitter_status_connect
+* kafka-topics --zookeeper localhost:32181 --describe --topic twitter_status_connect
+* kafka-configs --bootstrap-server=127.0.0.1:29092 --alter --add-config retention.ms=1000 --topic twitter_status_connect

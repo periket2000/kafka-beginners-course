@@ -21,8 +21,9 @@ public class StreamsFilterTweets {
         StreamsBuilder builder = new StreamsBuilder();
         // input
         KStream<String, String> input = builder.stream("twitter_status_connect");
-        KStream<String, String> filtered = input.filter((k, tweet) -> extractFollowers(tweet) > 1);
-        filtered.to("filtered_tweets");
+        KStream<String, String> filtered = input.filter((k, tweet) -> extractFollowers(tweet) > 10000);
+        KStream<String, String> filtered2 = filtered.filter((k, tweet) -> !isRetweet(tweet));
+        filtered2.to("filtered_tweets");
         // build topology
         KafkaStreams stream = new KafkaStreams(builder.build(), p);
         // start
@@ -44,6 +45,19 @@ public class StreamsFilterTweets {
                     .getAsInt();
         } catch (NullPointerException e) {
             return 0;
+        }
+    }
+
+    private static boolean isRetweet(String tweet) {
+        try {
+            return parser.parse(tweet)
+                    .getAsJsonObject()
+                    .get("payload")
+                    .getAsJsonObject()
+                    .get("Retweet")
+                    .getAsBoolean();
+        } catch (NullPointerException e) {
+            return false;
         }
     }
 }
