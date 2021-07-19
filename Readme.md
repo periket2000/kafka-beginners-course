@@ -18,6 +18,19 @@ See projects:
 - https://github.com/periket2000/mysql-stack
 - https://github.com/periket2000/sanic-nlp
 
+## create database
+
+create database tweeter;
+create user tweeter identified by 'password';
+grant all on tweeter.* to tweeter;
+
+use tweeter;
+CREATE TABLE `reduced_tweets` (
+  `time` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `text` text NOT NULL,
+  `user` varchar(256) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 ## create topics
 
 - kafka-topics --zookeeper 127.0.0.1:32181 --topic twitter_status_connect --create --partitions 3 --replication-factor 1
