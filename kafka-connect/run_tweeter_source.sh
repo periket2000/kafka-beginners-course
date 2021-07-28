@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-connect-standalone connect-standalone-tweeter-source.properties twitter.properties
+connect-standalone.sh connect-standalone-tweeter-source.properties twitter.properties
