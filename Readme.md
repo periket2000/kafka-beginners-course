@@ -47,10 +47,10 @@ CREATE TABLE `reduced_tweets` (
 
 ## flow
 
-1. tweeter-source feeds kafka topic X
-2. filter takes from X and filter by followers feeding topic Y
-3. map takes from Y checking tweet language and feeding topic Z
-4. mysql-sink takes from Z and insert in mysql DB
+1. tweeter-source: Connect to tweeter and feeds kafka topic X (Script run_tweeter_source.sh)
+2. filter: Takes from X and filter by followers feeding topic Y (jar -> filter-1.0.jar)
+3. map: Takes from Y checking tweet language and feeding topic Z (jar -> map-1.0.jar)
+4. mysql-sink: Takes from Z and insert in mysql DB (Script run_tweeter_mysql_sink.sh)
 
 ## Test configurations
 
