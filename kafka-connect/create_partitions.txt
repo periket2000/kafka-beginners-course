@@ -16,6 +16,12 @@ kafka-topics --zookeeper 127.0.0.1:2181 --delete --topic reduced_tweets
 - kafka-topics --zookeeper 127.0.0.1:32181 --topic filtered_tweets --create --partitions 3 --replication-factor 1
 - kafka-topics --zookeeper 127.0.0.1:32181 --topic reduced_tweets --create --partitions 3 --replication-factor 1
 
+ -> new Version:
+ - kafka-topics --bootstrap-server 127.0.0.1:39092 --topic twitter_status_connect --create --partitions 3 --replication-factor 1
+ - kafka-topics --bootstrap-server 127.0.0.1:39092 --topic twitter_deletes_connect --create --partitions 3 --replication-factor 1
+ - kafka-topics --bootstrap-server 127.0.0.1:39092 --topic filtered_tweets --create --partitions 3 --replication-factor 1
+ - kafka-topics --bootstrap-server 127.0.0.1:39092 --topic reduced_tweets --create --partitions 3 --replication-factor 1
+
 # arrancar mysql en docker (https://github.com/periket2000/mysql-stack.git)
 
 - docker run -e MYSQL_ROOT_PASSWORD=nuked -v /Users/periket2000/devel/docker/mysql/data/:/var/lib/mysql/ -p 3308:3306 mysql
