@@ -30,6 +30,8 @@ kafka-topics --zookeeper 127.0.0.1:2181 --delete --topic reduced_tweets
 - create user tweeter identified by 'password';
 - use tweeter;
 - CREATE TABLE `reduced_tweets` (`time` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(), `text` text NOT NULL, `user` varchar(256) NOT NULL ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+- grant all on reduced_tweets.* to tweeter;
+- flush privileges;
 
 # arrancar sanic en docker (https://github.com/periket2000/sanic-nlp)
 
